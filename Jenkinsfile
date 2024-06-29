@@ -58,7 +58,6 @@ pipeline {
             podman login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD docker.io
             podman build -t namdh1985/react-app:latest .
             podman push namdh1985/react-app:latest
-            podman logout
             '''
           }
         }
