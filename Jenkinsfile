@@ -52,8 +52,8 @@ pipeline {
     }
     stage('Build react app') {
       steps {
-        container('docker') {
-          sh 'docker build -t namdh1985/react-app:latest .'
+        container('podman') {
+          sh 'podman build -t namdh1985/react-app:latest .'
         }
       }
     }
