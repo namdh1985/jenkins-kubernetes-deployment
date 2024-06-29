@@ -33,7 +33,7 @@ pipeline {
                 - /dev/null
               volumeMounts:
                 - name: kubeconfig
-                  mountPath: /.kube  
+                  mountPath: /.kube
           volumes:
             - name: cgroup
               hostPath:
@@ -78,11 +78,10 @@ pipeline {
     }
     stage('Deploy to Kubernetes') {
       steps {
-        container('kubectl') {
-          
+        container('kubectl') {          
           withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
             sh '''
-              cp $KUBECONFIG /.kube/config           
+              cp $KUBECONFIG /.kube/config
               kubectl apply -f deployment.yaml -n jenkins --kubeconfig=/.kube/config
               kubectl apply -f service.yaml -n jenkins --kubeconfig=/.kube/config
             '''
