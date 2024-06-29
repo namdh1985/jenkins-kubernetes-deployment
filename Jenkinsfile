@@ -1,7 +1,18 @@
 pipeline {
   agent {
     kubernetes {
-      label 'my-kubernetes-agent'
+      yaml '''
+        apiVersion: v1
+        kind: Pod
+        metadata:
+          name: node-app
+        spec:
+          containers:
+            - name: node
+              image: node:19-alpine3.16
+              command: ["tail", "-f", "/dev/null"]  
+          restartPolicy: Never  
+      '''
     }
   }
   stages {
@@ -18,10 +29,11 @@ pipeline {
         }
       }
     }
-    stage('Build and push Docker image') {
+    stage('Build react app') {
       steps {
-        sh 'docker build -t my-image:latest .'
-        sh 'docker push my-image:latest'
+        container('node') {
+          sh 'npm i'
+        }
       }
     }
     stage('Deploy to Kubernetes') {
