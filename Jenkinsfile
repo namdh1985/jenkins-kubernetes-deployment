@@ -23,6 +23,15 @@ pipeline {
                   mountPath: /var/lib/containers
                 - name: podman-socket
                   mountPath: /run/podman/podman.sock
+            - name: kubectl
+              image: bitnami/kubectl:latest
+              command:
+                - tail
+                - "-f"
+                - /dev/null
+              volumeMounts:
+                - name: kubeconfig
+                  mountPath: /root/.kube    
           volumes:
             - name: cgroup
               hostPath:
@@ -32,7 +41,9 @@ pipeline {
                 path: /var/lib/containers
             - name: podman-socket
               hostPath:
-                path: /run/podman/podman.sock 
+                path: /run/podman/podman.sock
+            - name: kubeconfig
+              emptyDir: {}
       '''
     }
   }
@@ -65,10 +76,15 @@ pipeline {
     }
     stage('Deploy to Kubernetes') {
       steps {
-        sh '''
-          kubectl apply -f deployment.yaml -n jenkins
-          kubectl apply -f service.yaml -n jenkins
-        '''
+        container('kubectl') {
+          withCredentials([file(credentialsId: 'kubectl', variable: 'KUBECONFIG_FILE')]) {
+            sh '''
+              cp $KUBECONFIG_FILE /root/.kube/config
+              kubectl apply -f deployment.yaml -n jenkins
+              kubectl apply -f service.yaml -n jenkins
+            '''
+          }
+        }
       }
     }
   }
