@@ -86,8 +86,6 @@ pipeline {
               kubectl delete ns abc
               kubectl delete -f deployment.yaml -n jenkins
               kubectl delete -f service.yaml -n jenkins
-              //kubectl apply -f deployment.yaml -n abc
-              //kubectl apply -f service.yaml -n abc
             '''
           }
         }
