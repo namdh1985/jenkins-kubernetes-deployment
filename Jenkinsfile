@@ -5,13 +5,25 @@ pipeline {
         apiVersion: v1
         kind: Pod
         metadata:
-          name: node-app
+          name: docker-build
         spec:
           containers:
-            - name: node
-              image: node:19-alpine3.16
-              command: ["tail", "-f", "/dev/null"]  
-          restartPolicy: Never  
+            - name: docker
+              image: docker:19.03.12
+              command:
+                - tail
+                - '-f'
+                - '/dev/null'
+              securityContext:
+                privileged: true
+              volumeMounts:
+                - name: docker-socket
+                  mountPath: /var/run/docker.sock
+          volumes:
+            - name: docker-socket
+              hostPath:
+                path: /var/run/docker.sock
+ 
       '''
     }
   }
@@ -31,8 +43,8 @@ pipeline {
     }
     stage('Build react app') {
       steps {
-        container('node') {
-          sh 'npm i'
+        container('docker') {
+          sh 'docker build -t namdh1985/react-app:latest .'
         }
       }
     }
