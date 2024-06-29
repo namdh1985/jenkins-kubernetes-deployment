@@ -66,12 +66,10 @@ pipeline {
     }
     stage('Deploy to Kubernetes') {
       steps {
-        script(
-          sh '''
+        sh '''
           kubectl apply -f deployment.yaml -n jenkins
           kubectl apply -f service.yaml -n jenkins
-          '''
-        )
+        '''
       }
     }
   }
