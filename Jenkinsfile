@@ -26,14 +26,14 @@ pipeline {
             - name: kubectl
               image: bitnami/kubectl:latest
               securityContext:
-                privileged: true
+                runAsUser: 0
               command:
                 - tail
                 - "-f"
                 - /dev/null
               volumeMounts:
                 - name: kubeconfig
-                  mountPath: /root/.kube    
+                  mountPath: /root/.kube   
           volumes:
             - name: cgroup
               hostPath:
@@ -81,11 +81,9 @@ pipeline {
         container('kubectl') {
           
           withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
-            sh '''
-              touch /.kube/config
-              cp $KUBECONFIG /.kube/config
-              kubectl apply -f deployment.yaml -n jenkins --kubeconfig=/.kube/config
-              kubectl apply -f service.yaml -n jenkins --kubeconfig=/.kube/config
+            sh '''              
+              kubectl apply -f deployment.yaml -n jenkins --kubeconfig=/root/.kube/config
+              kubectl apply -f service.yaml -n jenkins --kubeconfig=/root/.kube/config
             '''
           }
         }
