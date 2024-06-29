@@ -81,7 +81,6 @@ pipeline {
         container('kubectl') {          
           withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
             sh '''
-              kubectl create ns abc
               kubectl apply -f deployment.yaml -n abc
               kubectl apply -f service.yaml -n abc
             '''
