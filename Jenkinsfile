@@ -58,6 +58,7 @@ pipeline {
             podman login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD docker.io
             podman build -t namdh1985/react-app:latest .
             podman push namdh1985/react-app:latest
+            podman logout
             '''
           }
         }
@@ -65,9 +66,11 @@ pipeline {
     }
     stage('Deploy to Kubernetes') {
       steps {
-        kubernetesDeploy(
-          configs: 'kubernetes/deployment.yaml',
-          kubeconfigId: 'my-kubeconfig'
+        script(
+          sh '''
+          kubectl apply -f deployment.yaml -n jenkins
+          kubectl apply -f service.yaml -n jenkins
+          '''
         )
       }
     }
