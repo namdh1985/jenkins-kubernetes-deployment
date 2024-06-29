@@ -1,71 +1,35 @@
 pipeline {
-  environment {
-    dockerImage = "docker:19.03.12"
-    GIT_CREDENTIALS_ID = 'github-credentials'
-  }
   agent {
     kubernetes {
-      yaml '''
-        apiVersion: v1
-        kind: Pod
-        spec:
-          containers:          
-          - name: docker
-            image: docker:19.03.12
-            securityContext:
-              privileged: true
-            command:
-            - cat
-            tty: true
-            volumeMounts:
-             - mountPath: /var/run/docker.sock
-               name: docker-sock
-          volumes:
-          - name: docker-sock
-            hostPath:
-              path: /var/run/docker.sock    
-        '''
+      label 'my-kubernetes-agent'
     }
   }
   stages {
-    stage('Checkout Source') {
+    stage('Clone repository') {
       steps {
         script {
-                    def gitRepo = 'https://github.com/namdh1985/jenkins-kubernetes-deployment.git'
-                    def gitBranch = 'main'  
-                    checkout([$class: 'GitSCM', 
-                              branches: [[name: "*/${gitBranch}"]],  
-                              userRemoteConfigs: [[url: gitRepo, 
-                                                   credentialsId: "${env.GIT_CREDENTIALS_ID}"]]
-                    ])
-                }
-      }
-    }
-    stage('Build image') {
-      steps{
-        container ('docker') {
-          sh 'docker build -t namdh1985/react-app:latest .'
+          def gitRepo = 'https://github.com/namdh1985/jenkins-kubernetes-deployment.git'
+          def gitBranch = 'main'  
+          checkout([$class: 'GitSCM', 
+                    branches: [[name: "*/${gitBranch}"]],  
+                    userRemoteConfigs: [[url: gitRepo, 
+                                          credentialsId: "${env.GIT_CREDENTIALS_ID}"]]
+          ])
         }
       }
     }
-    stage('Pushing Image') {
-      environment {
-          registryCredential = 'dockerhub-credentials'
-           }
-      steps{
-        script {
-          docker.withRegistry( 'https://registry.hub.docker.com', registryCredential ) {
-            dockerImage.push("latest")
-          }
-        }
-      }
-    }
-    stage('Deploying React.js container to Kubernetes') {
+    stage('Build and push Docker image') {
       steps {
-        script {
-          kubernetesDeploy(configs: "deployment.yaml", 
-                                         "service.yaml")
-        }
+        sh 'docker build -t my-image:latest .'
+        sh 'docker push my-image:latest'
+      }
+    }
+    stage('Deploy to Kubernetes') {
+      steps {
+        kubernetesDeploy(
+          configs: 'kubernetes/deployment.yaml',
+          kubeconfigId: 'my-kubeconfig'
+        )
       }
     }
   }
