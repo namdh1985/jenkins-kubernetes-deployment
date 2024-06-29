@@ -1,6 +1,6 @@
 pipeline {
   environment {
-    dockerImage = ""
+    dockerImage = "docker:19.03.12"
     GIT_CREDENTIALS_ID = 'github-credentials'
   }
   agent {
@@ -11,7 +11,7 @@ pipeline {
         spec:
           containers:          
           - name: docker
-            image: docker:latest
+            image: ${dockerImage}
             command:
             - cat
             tty: true
