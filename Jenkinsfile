@@ -77,7 +77,7 @@ pipeline {
     stage('Deploy to Kubernetes') {
       steps {
         container('kubectl') {
-          withCredentials([file(credentialsId: 'kubectl', variable: 'KUBECONFIG_FILE')]) {
+          withCredentials([file(credentialsId: 'kubectl', variable: 'KUBECONFIG')]) {
             sh '''
               cp $KUBECONFIG_FILE /root/.kube/config
               kubectl apply -f deployment.yaml -n jenkins
