@@ -25,6 +25,8 @@ pipeline {
                   mountPath: /run/podman/podman.sock
             - name: kubectl
               image: bitnami/kubectl:latest
+              securityContext:
+                privileged: true
               command:
                 - tail
                 - "-f"
