@@ -54,7 +54,7 @@ pipeline {
       steps {
         container('podman') {
           sh 'podman build -t namdh1985/react-app:latest .'
-          sh 'podman push namdh1985/react-app:latest .'
+          sh 'podman push namdh1985/react-app:latest'
         }
       }
     }
