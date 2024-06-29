@@ -5,11 +5,11 @@ pipeline {
         apiVersion: v1
         kind: Pod
         metadata:
-          name: docker-build
+          name: podman-build
         spec:
           containers:
-            - name: docker
-              image: docker:19.03.12
+            - name: podman
+              image: quay.io/podman/stable
               command:
                 - tail
                 - '-f'
@@ -17,13 +17,22 @@ pipeline {
               securityContext:
                 privileged: true
               volumeMounts:
-                - name: docker-socket
-                  mountPath: /var/run/docker.sock
+                - name: cgroup
+                  mountPath: /sys/fs/cgroup
+                - name: containers
+                  mountPath: /var/lib/containers
+                - name: podman-socket
+                  mountPath: /run/podman/podman.sock
           volumes:
-            - name: docker-socket
+            - name: cgroup
               hostPath:
-                path: /var/run/docker.sock
- 
+                path: /sys/fs/cgroup
+            - name: containers
+              hostPath:
+                path: /var/lib/containers
+            - name: podman-socket
+              hostPath:
+                path: /run/podman/podman.sock 
       '''
     }
   }
