@@ -1,8 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: deployment 
-  namespace: jenkins
+  name: deployment
   labels:
     app: react-app
 spec:

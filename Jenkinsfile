@@ -81,9 +81,9 @@ pipeline {
         container('kubectl') {          
           withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
             sh '''
-              cp $KUBECONFIG /.kube/config
-              kubectl apply -f deployment.yaml -n jenkins --kubeconfig=/.kube/config
-              kubectl apply -f service.yaml -n jenkins --kubeconfig=/.kube/config
+              kubectl create ns abc
+              kubectl apply -f deployment.yaml -n abc --kubeconfig=/.kube/config
+              kubectl apply -f service.yaml -n abc --kubeconfig=/.kube/config
             '''
           }
         }
