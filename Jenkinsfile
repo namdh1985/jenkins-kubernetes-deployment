@@ -11,7 +11,7 @@ pipeline {
         spec:
           containers:          
           - name: docker
-            image: ${dockerImage}
+            image: docker:19.03.12
             command:
             - cat
             tty: true
