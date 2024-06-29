@@ -25,8 +25,6 @@ pipeline {
                   mountPath: /run/podman/podman.sock
             - name: kubectl
               image: bitnami/kubectl:latest
-              securityContext:
-                privileged: true
               command:
                 - tail
                 - "-f"
@@ -50,7 +48,7 @@ pipeline {
     }
   }
   environment {
-    KUBECONFIG = '/root/.kube/config'
+    KUBECONFIG = '/.kube/config'
   }
   stages {
     stage('Clone repository') {
@@ -82,8 +80,9 @@ pipeline {
     stage('Deploy to Kubernetes') {
       steps {
         container('kubectl') {
-          withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
+          withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG_FILE')]) {
             sh '''
+              cp ${KUBECONFIG_FILE} ${KUBECONFIG}
               kubectl apply -f deployment.yaml -n jenkins --kubeconfig=${KUBECONFIG}
               kubectl apply -f service.yaml -n jenkins --kubeconfig=${KUBECONFIG}
             '''
