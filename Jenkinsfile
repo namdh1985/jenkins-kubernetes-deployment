@@ -2,12 +2,21 @@ pipeline {
   environment {
     dockerimagename = "namdh1985/react-app"
     dockerImage = ""
+    GIT_CREDENTIALS_ID = 'github-credentials'
   }
   agent any
   stages {
     stage('Checkout Source') {
       steps {
-        git 'https://github.com/namdh1985/jenkins-kubernetes-deployment.git'
+        script {
+                    def gitRepo = 'https://github.com/namdh1985/jenkins-kubernetes-deployment.git'
+                    def gitBranch = 'main'  
+                    checkout([$class: 'GitSCM', 
+                              branches: [[name: "*/${gitBranch}"]],  
+                              userRemoteConfigs: [[url: gitRepo, 
+                                                   credentialsId: "${env.GIT_CREDENTIALS_ID}"]]
+                    ])
+                }
       }
     }
     stage('Build image') {
