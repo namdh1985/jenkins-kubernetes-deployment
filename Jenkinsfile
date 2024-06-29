@@ -1,10 +1,30 @@
 pipeline {
   environment {
-    dockerimagename = "namdh1985/react-app"
     dockerImage = ""
     GIT_CREDENTIALS_ID = 'github-credentials'
   }
-  agent any
+  agent {
+    kubernetes {
+      yaml '''
+        apiVersion: v1
+        kind: Pod
+        spec:
+          containers:          
+          - name: docker
+            image: docker:latest
+            command:
+            - cat
+            tty: true
+            volumeMounts:
+             - mountPath: /var/run/docker.sock
+               name: docker-sock
+          volumes:
+          - name: docker-sock
+            hostPath:
+              path: /var/run/docker.sock    
+        '''
+    }
+  }
   stages {
     stage('Checkout Source') {
       steps {
@@ -21,8 +41,8 @@ pipeline {
     }
     stage('Build image') {
       steps{
-        script {
-          dockerImage = docker.build dockerimagename
+        container ('docker') {
+          sh 'docker build -t namdh1985/react-app:latest .'
         }
       }
     }
