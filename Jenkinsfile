@@ -22,7 +22,7 @@ pipeline {
     stage('Build image') {
       steps{
         script {
-          dockerImage = docker.build dockerimagename
+          dockerImage = podman.build dockerimagename
         }
       }
     }
