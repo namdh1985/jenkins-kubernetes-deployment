@@ -12,6 +12,8 @@ pipeline {
           containers:          
           - name: docker
             image: docker:19.03.12
+            securityContext:
+              privileged: true
             command:
             - cat
             tty: true
