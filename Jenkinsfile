@@ -47,6 +47,9 @@ pipeline {
       '''
     }
   }
+  environment {
+    KUBECONFIG = '/root/.kube/config'
+  }
   stages {
     stage('Clone repository') {
       steps {
@@ -77,11 +80,10 @@ pipeline {
     stage('Deploy to Kubernetes') {
       steps {
         container('kubectl') {
-          withCredentials([file(credentialsId: 'kubectl', variable: 'KUBECONFIG')]) {
+          withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
             sh '''
-              cp $KUBECONFIG /root/.kube/config
-              kubectl apply -f deployment.yaml -n jenkins --kubeconfig=/root/.kube/config
-              kubectl apply -f service.yaml -n jenkins --kubeconfig=/root/.kube/config
+              kubectl apply -f deployment.yaml -n jenkins --kubeconfig=${KUBECONFIG}
+              kubectl apply -f service.yaml -n jenkins --kubeconfig=${KUBECONFIG}
             '''
           }
         }
