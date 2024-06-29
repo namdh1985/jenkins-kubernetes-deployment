@@ -52,9 +52,14 @@ pipeline {
     }
     stage('Build react app') {
       steps {
-        container('podman') {
-          sh 'podman build -t namdh1985/react-app:latest .'
-          sh 'podman push namdh1985/react-app:latest'
+        withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+          container('podman') {
+            sh '''
+            podman login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD docker.io
+            podman build -t namdh1985/react-app:latest .
+            podman push namdh1985/react-app:latest
+            '''
+          }
         }
       }
     }
