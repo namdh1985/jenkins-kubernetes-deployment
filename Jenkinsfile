@@ -65,7 +65,7 @@ pipeline {
     }
     stage('Build') {
       steps {
-        withCredentials([usernamePassword(credentialsId: 'harbor-repo', usernameVariable: 'HARBOR_USERNAME', passwordVariable: 'HARBOR_PASSWORD')]) {
+        withCredentials([usernamePassword(credentialsId: 'harbor', usernameVariable: 'HARBOR_USERNAME', passwordVariable: 'HARBOR_PASSWORD')]) {
           container('podman') {
             sh '''
             podman login -u $HARBOR_USERNAME -p $HARBOR_PASSWORD cor.harbor.f88.co
