@@ -68,7 +68,7 @@ pipeline {
         withCredentials([usernamePassword(credentialsId: 'harbor', usernameVariable: 'HARBOR_USERNAME', passwordVariable: 'HARBOR_PASSWORD')]) {
           container('podman') {
             sh '''
-            podman login -u $HARBOR_USERNAME -p $HARBOR_PASSWORD cor.harbor.f88.co
+            podman login -u $HARBOR_USERNAME -p $HARBOR_PASSWORD core.harbor.f88.co
             podman build -t core.harbor.f88.co/library/react-app:latest .
             podman push core.harbor.f88.co/library/react-app:latest
             '''
