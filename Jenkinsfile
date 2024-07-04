@@ -7,7 +7,7 @@ pipeline {
         metadata:
           name: podman-build
         spec:
-          containers:
+          containers:            
             - name: podman
               image: quay.io/podman/stable
               command:
@@ -45,7 +45,7 @@ pipeline {
               hostPath:
                 path: /run/podman/podman.sock
             - name: kubeconfig
-              emptyDir: {}
+              emptyDir: {}  
       '''
     }
   }
@@ -63,27 +63,24 @@ pipeline {
         }
       }
     }
-    stage('Build react app') {
+    stage('Build') {
       steps {
-        withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials', usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+        withCredentials([usernamePassword(credentialsId: 'harbor-repo', usernameVariable: 'HARBOR_USERNAME', passwordVariable: 'HARBOR_PASSWORD')]) {
           container('podman') {
             sh '''
-            podman login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD docker.io
-            podman build -t namdh1985/react-app:latest .
-            podman push namdh1985/react-app:latest
+            podman login -u $HARBOR_USERNAME -p $HARBOR_PASSWORD cor.harbor.f88.co
+            podman build -t core.harbor.f88.co/library/react-app:latest .
+            podman push core.harbor.f88.co/library/react-app:latest
             '''
           }
         }
       }
     }
-    stage('Deploy to Kubernetes') {
+    stage('Deploy') {
       steps {
         container('kubectl') {          
           withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
             sh '''
-              kubectl delete -f deployment.yaml -n abc
-              kubectl delete -f service.yaml -n abc
-              kubectl delete ns abc
               kubectl delete -f deployment.yaml -n jenkins
               kubectl delete -f service.yaml -n jenkins
             '''
