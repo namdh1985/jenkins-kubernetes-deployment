@@ -26,10 +26,7 @@ spec:
               subPath: ca.crt
       volumes:
         - name: harbor-certs
-          projected:
-            sources:
-              configMap:
-                name: harbor-certs
-                optional: true  
+          configMap:
+            name: harbor-certs        
       imagePullSecrets:
         - name: harbor-cred
