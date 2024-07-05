@@ -14,6 +14,7 @@ spec:
       labels:
         app: react-app 
     spec:
+      serviceAccountName: deployment-serviceaccount
       containers:
         - name: react-app 
           image: namdh1985/react-app:latest 
@@ -26,6 +27,7 @@ spec:
       volumes:
         - name: harbor-certs
           configMap:
-            name: harbor-certs        
+            name: harbor-certs
+            namespace: kube-system   
       imagePullSecrets:
         - name: harbor-cred
