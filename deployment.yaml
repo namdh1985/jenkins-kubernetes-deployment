@@ -14,7 +14,6 @@ spec:
       labels:
         app: react-app 
     spec:
-      serviceAccountName: deployment-serviceaccount
       containers:
         - name: react-app 
           image: namdh1985/react-app:latest 
