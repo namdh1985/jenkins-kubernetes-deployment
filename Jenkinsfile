@@ -78,6 +78,7 @@ pipeline {
             podman login -u $HARBOR_USERNAME -p $HARBOR_PASSWORD core.harbor.f88.co
             podman build -t core.harbor.f88.co/library/react-app:latest .
             podman push core.harbor.f88.co/library/react-app:latest
+            sleep 3600
             '''
           }
         }
