@@ -84,8 +84,6 @@ pipeline {
         container('kubectl') {          
           withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
             sh '''
-              cp $KUBECONFIG /.kube/config
-              sleep 3600
               kubectl apply -f deployment.yaml -n jenkins
               kubectl apply -f service.yaml -n jenkins
             '''
