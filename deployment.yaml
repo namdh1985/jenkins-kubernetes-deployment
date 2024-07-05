@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: react-app 
-        image: namdh1985/react-app:latest 
+        image: core-harbor.f88.co/library/react-app:latest
         ports:
         - containerPort: 3000
         volumeMounts:
