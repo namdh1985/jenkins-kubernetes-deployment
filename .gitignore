@@ -24,3 +24,4 @@ yarn-error.log*
 
 # config
 Jenkinsfile_aws
+Jenkinsfile_harbor

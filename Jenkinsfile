@@ -10,7 +10,7 @@ pipeline {
           containers:            
             - name: podman
               image: quay.io/podman/stable
-              command: ["/bin/sh", "-c", "cat /certs/ca.crt >> /etc/ssl/certs/ca-certificates.crt && tail -f /dev/null"]
+              command: ["/bin/sh", "-c", "tail -f /dev/null"]
               securityContext:
                 privileged: true
               volumeMounts:
@@ -20,10 +20,6 @@ pipeline {
                   mountPath: /var/lib/containers
                 - name: podman-socket
                   mountPath: /run/podman/podman.sock
-                - name: ssl-certs
-                  mountPath: /etc/ssl/certs/
-                - name: certs
-                  mountPath: /certs
             - name: kubectl
               image: bitnami/kubectl:latest
               securityContext:
@@ -47,12 +43,6 @@ pipeline {
                 path: /run/podman/podman.sock
             - name: kubeconfig
               emptyDir: {}
-            - name: ssl-certs
-              hostPath:
-                path: /etc/ssl/certs
-            - name: certs
-              configMap:
-                name: harbor-certs 
       '''
     }
   }
