@@ -70,10 +70,10 @@ pipeline {
         withCredentials([usernamePassword(credentialsId: 'harbor', usernameVariable: 'HARBOR_USERNAME', passwordVariable: 'HARBOR_PASSWORD')]) {
           container('podman') {
             sh '''
-            cat /etc/ssl/certs/ca-certificates.crt
             podman login -u $HARBOR_USERNAME -p $HARBOR_PASSWORD core-harbor.f88.co
             podman build -t core-harbor.f88.co/library/react-app:latest .
             podman push core-harbor.f88.co/library/react-app:latest
+            podman rmi -a -f
             '''
           }
         }
@@ -84,8 +84,8 @@ pipeline {
         container('kubectl') {          
           withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
             sh '''
-              kubectl delete -f deployment.yaml -n jenkins
-              kubectl delete -f service.yaml -n jenkins
+              kubectl apply -f deployment.yaml -n jenkins
+              kubectl apply -f service.yaml -n jenkins
             '''
           }
         }
