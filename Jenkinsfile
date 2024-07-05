@@ -20,6 +20,8 @@ pipeline {
                   mountPath: /var/lib/containers
                 - name: podman-socket
                   mountPath: /run/podman/podman.sock
+                - name: ssl-certs
+                  mountPath: /etc/ssl/certs/
             - name: kubectl
               image: bitnami/kubectl:latest
               securityContext:
@@ -43,6 +45,9 @@ pipeline {
                 path: /run/podman/podman.sock
             - name: kubeconfig
               emptyDir: {}
+            - name: ssl-certs
+              hostPath:
+                path: /etc/ssl/certs
       '''
     }
   }
