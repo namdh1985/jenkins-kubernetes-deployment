@@ -19,12 +19,5 @@ spec:
         image: core-harbor.f88.co/library/react-app:latest
         ports:
         - containerPort: 3000
-        volumeMounts:
-          - name: ssl-certs
-            mountPath: /etc/ssl/certs/
-      volumes:
-        - name: ssl-certs
-          hostPath:
-            path: /etc/ssl/certs
       imagePullSecrets:
       - name: harbor-cred
