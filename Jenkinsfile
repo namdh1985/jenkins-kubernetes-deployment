@@ -85,6 +85,7 @@ pipeline {
           withCredentials([file(credentialsId: 'kubeconfig', variable: 'KUBECONFIG')]) {
             sh '''
               kubectl apply -f deployment.yaml -n jenkins
+              kubectl set image deployment/deployment react-app=core-harbor.f88.co/library/react-app:latest -n jenkins
               kubectl apply -f service.yaml -n jenkins
             '''
           }
