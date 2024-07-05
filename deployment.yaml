@@ -15,9 +15,17 @@ spec:
         app: react-app 
     spec:
       containers:
-      - name: react-app 
-        image: namdh1985/react-app:latest 
-        ports:
-        - containerPort: 3000
+        - name: react-app 
+          image: namdh1985/react-app:latest 
+          ports:
+            - containerPort: 3000
+          volumeMounts:
+            - name: harbor-certs
+              mountPath: /etc/ssl/certs
+              subPath: ca.crt
+      volumes:
+        - name: harbor-certs
+          configMap:
+            name: harbor-certs        
       imagePullSecrets:
-      - name: harbor-cred
+        - name: harbor-cred
